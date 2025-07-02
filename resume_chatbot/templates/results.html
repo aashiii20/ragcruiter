@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat with Resume Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f6f8;
+            padding: 40px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .resume-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 900px;
+            margin: 20px auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .chat-section {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background: #28a745;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #218838;
+        }
+        #response {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #333;
+            white-space: pre-wrap;
+        }
+    </style>
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value;
+            input.value = '';
+
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = 'Loading...';
+
+            const response = await fetch('/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ message })
+            });
+
+            const result = await response.json();
+            responseDiv.innerHTML = `<b>Response:</b><br>${result.response}`;
+        }
+    </script>
+</head>
+<body>
+    <h1>Chat with your Resume</h1>
+
+    <div class="resume-container">
+        <p><b>Resume Text:</b></p>
+        <div style="white-space: pre-wrap; border: 1px solid #ccc; padding: 15px; background-color: #fafafa; border-radius: 6px;">
+            {{ resume_text }}
+        </div>
+    </div>
+
+    <div class="chat-section">
+        <input type="text" id="userInput" placeholder="Ask something about the resume...">
+        <button onclick="sendMessage()">Send</button>
+
+        <div id="response"></div>
+    </div>
+</body>
+</html>
